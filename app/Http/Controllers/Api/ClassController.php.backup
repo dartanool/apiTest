@@ -17,7 +17,7 @@ class ClassController extends Controller
     ) {}
 
     /**
-     * получить список всех классов
+     * Get all classes.
      */
     public function index(): JsonResponse
     {
@@ -38,7 +38,7 @@ class ClassController extends Controller
     }
 
     /**
-     * получить информацию о конкретном классе
+     * Get a specific class.
      */
     public function show(int $id): JsonResponse
     {
@@ -64,7 +64,7 @@ class ClassController extends Controller
     }
 
     /**
-     *  получить учебный план 
+     * Get curriculum for a specific class.
      */
     public function curriculum(int $id): JsonResponse
     {
@@ -90,7 +90,7 @@ class ClassController extends Controller
     }
 
     /**
-     * создать класс
+     * Create a new class.
      */
     public function store(StoreClassRequest $request): JsonResponse
     {
@@ -112,7 +112,7 @@ class ClassController extends Controller
     }
 
     /**
-     * обновить класс 
+     * Update a class.
      */
     public function update(UpdateClassRequest $request, int $id): JsonResponse
     {
@@ -139,7 +139,7 @@ class ClassController extends Controller
     }
 
     /**
-     * создать/обновить учебный план 
+     * Update curriculum for a class.
      */
     public function updateCurriculum(UpdateCurriculumRequest $request, int $id): JsonResponse
     {
@@ -166,14 +166,14 @@ class ClassController extends Controller
     }
 
     /**
-     * удалить класс 
+     * Delete a class.
      */
     public function destroy(int $id): JsonResponse
     {
         try {
             $this->classService->deleteClass($id);
 
-            return response()->json([
+            return response()->json([54321ё 
                 'success' => true,
                 'message' => 'Класс успешно удален.',
             ]);
@@ -191,3 +191,4 @@ class ClassController extends Controller
         }
     }
 }
+
