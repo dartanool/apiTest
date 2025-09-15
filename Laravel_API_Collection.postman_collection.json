@@ -1,0 +1,300 @@
+{
+  "info": {
+    "name": "Laravel API Testing",
+    "description": "Коллекция для тестирования Laravel API управления студентами и классами",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "api_url",
+      "value": "{{base_url}}/api"
+    }
+  ],
+  "item": [
+    {
+      "name": "Студенты",
+      "item": [
+        {
+          "name": "GET - Список студентов",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{api_url}}/students",
+              "host": ["{{api_url}}"],
+              "path": ["students"]
+            }
+          }
+        },
+        {
+          "name": "GET - Студент по ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{api_url}}/students/1",
+              "host": ["{{api_url}}"],
+              "path": ["students", "1"]
+            }
+          }
+        },
+        {
+          "name": "POST - Создать студента",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Новый Студент\",\n  \"email\": \"new@example.com\",\n  \"class_id\": 1\n}"
+            },
+            "url": {
+              "raw": "{{api_url}}/students",
+              "host": ["{{api_url}}"],
+              "path": ["students"]
+            }
+          }
+        },
+        {
+          "name": "PUT - Обновить студента",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Обновленное Имя\",\n  \"class_id\": 2\n}"
+            },
+            "url": {
+              "raw": "{{api_url}}/students/1",
+              "host": ["{{api_url}}"],
+              "path": ["students", "1"]
+            }
+          }
+        },
+        {
+          "name": "DELETE - Удалить студента",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{api_url}}/students/1",
+              "host": ["{{api_url}}"],
+              "path": ["students", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Классы",
+      "item": [
+        {
+          "name": "GET - Список классов",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{api_url}}/classes",
+              "host": ["{{api_url}}"],
+              "path": ["classes"]
+            }
+          }
+        },
+        {
+          "name": "GET - Класс по ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{api_url}}/classes/1",
+              "host": ["{{api_url}}"],
+              "path": ["classes", "1"]
+            }
+          }
+        },
+        {
+          "name": "POST - Создать класс",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Новый Класс\"\n}"
+            },
+            "url": {
+              "raw": "{{api_url}}/classes",
+              "host": ["{{api_url}}"],
+              "path": ["classes"]
+            }
+          }
+        },
+        {
+          "name": "PUT - Обновить класс",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Обновленное Название\"\n}"
+            },
+            "url": {
+              "raw": "{{api_url}}/classes/1",
+              "host": ["{{api_url}}"],
+              "path": ["classes", "1"]
+            }
+          }
+        },
+        {
+          "name": "DELETE - Удалить класс",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{api_url}}/classes/1",
+              "host": ["{{api_url}}"],
+              "path": ["classes", "1"]
+            }
+          }
+        },
+        {
+          "name": "GET - Учебный план класса",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{api_url}}/classes/1/curriculum",
+              "host": ["{{api_url}}"],
+              "path": ["classes", "1", "curriculum"]
+            }
+          }
+        },
+        {
+          "name": "PUT - Обновить учебный план",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"lecture_ids\": [1, 2, 3, 4, 5]\n}"
+            },
+            "url": {
+              "raw": "{{api_url}}/classes/1/curriculum",
+              "host": ["{{api_url}}"],
+              "path": ["classes", "1", "curriculum"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Тестирование валидации",
+      "item": [
+        {
+          "name": "POST - Студент с невалидными данными",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"\",\n  \"email\": \"invalid-email\",\n  \"class_id\": 999\n}"
+            },
+            "url": {
+              "raw": "{{api_url}}/students",
+              "host": ["{{api_url}}"],
+              "path": ["students"]
+            }
+          }
+        },
+        {
+          "name": "POST - Класс с пустым именем",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"\"\n}"
+            },
+            "url": {
+              "raw": "{{api_url}}/classes",
+              "host": ["{{api_url}}"],
+              "path": ["classes"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
