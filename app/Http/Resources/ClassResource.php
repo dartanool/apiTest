@@ -10,7 +10,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class ClassResource extends JsonResource
 {
     /**
-     * Transform the resource into an array.
+     * Преобразовать ресурс в массив.
      *
      * @return array<string, mixed>
      */
@@ -20,24 +20,10 @@ class ClassResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'students' => $this->whenLoaded('students', function () {
-                return $this->students->map(function ($student) {
-                    return [
-                        'id' => $student->id,
-                        'name' => $student->name,
-                        'email' => $student->email,
-                        'class_id' => $student->class_id,
-                    ];
-                });
+                return StudentResource::collection($this->students);
             }),
             'lectures' => $this->whenLoaded('lectures', function () {
-                return $this->lectures->map(function ($lecture) {
-                    return [
-                        'id' => $lecture->id,
-                        'topic' => $lecture->topic,
-                        'description' => $lecture->description,
-                        'order' => $lecture->pivot->order,
-                    ];
-                });
+                return LectureResource::collection($this->lectures);
             }),
             'students_count' => $this->when(isset($this->students_count), $this->students_count),
             'lectures_count' => $this->when(isset($this->lectures_count), $this->lectures_count),

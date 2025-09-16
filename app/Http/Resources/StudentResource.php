@@ -10,7 +10,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class StudentResource extends JsonResource
 {
     /**
-     * Transform the resource into an array.
+     * Преобразовать ресурс в массив.
      *
      * @return array<string, mixed>
      */
@@ -28,14 +28,7 @@ class StudentResource extends JsonResource
                 ];
             }),
             'attended_lectures' => $this->whenLoaded('attendedLectures', function () {
-                return $this->attendedLectures->map(function ($lecture) {
-                    return [
-                        'id' => $lecture->id,
-                        'topic' => $lecture->topic,
-                        'description' => $lecture->description,
-                        'attended_at' => $lecture->pivot->attended_at,
-                    ];
-                });
+                return LectureResource::collection($this->attendedLectures);
             }),
             'created_at' => $this->created_at?->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at?->format('Y-m-d H:i:s'),

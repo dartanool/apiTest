@@ -14,7 +14,7 @@ use Throwable;
 class Handler extends ExceptionHandler
 {
     /**
-     * The list of the inputs that are never flashed to the session on validation exceptions.
+     * Список полей, которые никогда не сохраняются в сессии при ошибках валидации.
      *
      * @var array<int, string>
      */
@@ -25,7 +25,7 @@ class Handler extends ExceptionHandler
     ];
 
     /**
-     * Register the exception handling callbacks for the application.
+     * Зарегистрировать обработчики исключений для приложения.
      */
     public function register(): void
     {
@@ -35,7 +35,7 @@ class Handler extends ExceptionHandler
     }
 
     /**
-     * Render an exception into an HTTP response.
+     * Преобразовать исключение в HTTP ответ.
      */
     public function render($request, Throwable $e)
     {
@@ -48,7 +48,7 @@ class Handler extends ExceptionHandler
     }
 
     /**
-     * Handle API exceptions
+     * Обработать исключения API
      */
     private function handleApiException(Request $request, Throwable $e): JsonResponse
     {
@@ -79,7 +79,7 @@ class Handler extends ExceptionHandler
     }
 
     /**
-     * Create a standardized API response
+     * Создать стандартизированный ответ API
      */
     private function apiResponse(
         bool $success,

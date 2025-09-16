@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 class StoreLectureRequest extends FormRequest
 {
     /**
-     * Get the validation rules that apply to the request.
+     * Получить правила валидации для запроса.
      */
     public function rules(): array
     {

@@ -15,7 +15,7 @@ class UpdateCurriculumRequest extends FormRequest
     }
 
     /**
-     * Get the validation rules that apply to the request.
+     * Получить правила валидации для запроса.
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */

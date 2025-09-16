@@ -8,7 +8,7 @@ class UpdateLectureRequest extends FormRequest
 {
 
     /**
-     * Get the validation rules that apply to the request.
+     * Получить правила валидации для запроса.
      */
     public function rules(): array
     {

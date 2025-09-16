@@ -8,7 +8,7 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 class StudentCollection extends ResourceCollection
 {
     /**
-     * Transform the resource collection into an array.
+     * Преобразовать коллекцию ресурсов в массив.
      *
      * @return array<int|string, mixed>
      */
