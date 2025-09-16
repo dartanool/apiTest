@@ -5,143 +5,81 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Lecture\StoreLectureRequest;
 use App\Http\Requests\Lecture\UpdateLectureRequest;
+use App\Http\Resources\LectureResource;
+use App\Http\Resources\LectureCollection;
 use App\Services\LectureService;
+use App\Http\Traits\ApiResponseTrait;
+use App\DTOs\LectureDTO;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class LectureController extends Controller
 {
+    use ApiResponseTrait;
+
     public function __construct(
         private readonly LectureService $lectureService
     ) {}
 
     /**
-     * Display a listing of lectures.
+     * получить список всех лекций
      */
     public function index(): JsonResponse
     {
-        try {
-            $lectures = $this->lectureService->getAllLectures();
-            
-            return response()->json([
-                'success' => true,
-                'data' => $lectures
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to retrieve lectures',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        $lectures = $this->lectureService->getAll();
+        return $this->successResponse(
+            'Список лекций успешно получен.',
+            LectureCollection::make($lectures)
+        );
     }
 
     /**
-     * Display the specified lecture with classes and students.
+     * получить информацию о конкретной лекции
      */
     public function show(int $id): JsonResponse
     {
-        try {
-            $lecture = $this->lectureService->getLectureById($id);
-            
-            if (!$lecture) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Lecture not found'
-                ], 404);
-            }
-
-            return response()->json([
-                'success' => true,
-                'data' => $lecture
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to retrieve lecture',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        $lecture = $this->lectureService->getById($id);
+        return $this->successResponse(
+            'Информация о лекции успешно получена.',
+            new LectureResource($lecture)
+        );
     }
 
     /**
-     * Store a newly created lecture.
+     *  создать лекцию
      */
     public function store(StoreLectureRequest $request): JsonResponse
     {
-        try {
-            $validatedData = $request->validated();
-            $lecture = $this->lectureService->createLecture($validatedData);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Lecture created successfully',
-                'data' => $lecture
-            ], 201);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to create lecture',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        $lectureDTO = LectureDTO::fromArray($request->validated());
+        $lecture = $this->lectureService->create($lectureDTO);
+        
+        return $this->successResponse(
+            'Лекция успешно создана.',
+            new LectureResource($lecture),
+            201
+        );
     }
 
     /**
-     * Update the specified lecture.
+     *  обновить лекцию
      */
     public function update(UpdateLectureRequest $request, int $id): JsonResponse
     {
-        try {
-            $validatedData = $request->validated();
-            $lecture = $this->lectureService->updateLecture($id, $validatedData);
-
-            if (!$lecture) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Lecture not found'
-                ], 404);
-            }
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Lecture updated successfully',
-                'data' => $lecture
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to update lecture',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        $lectureDTO = LectureDTO::fromArray($request->validated());
+        $lecture = $this->lectureService->update($id, $lectureDTO);
+        
+        return $this->successResponse(
+            'Лекция успешно обновлена.',
+            new LectureResource($lecture)
+        );
     }
 
     /**
-     * Remove the specified lecture.
+     * удалить лекцию
      */
     public function destroy(int $id): JsonResponse
     {
-        try {
-            $deleted = $this->lectureService->deleteLecture($id);
-
-            if (!$deleted) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Lecture not found'
-                ], 404);
-            }
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Lecture deleted successfully'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to delete lecture',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        $this->lectureService->delete($id);
+        return $this->successResponse('Лекция успешно удалена.');
     }
 }

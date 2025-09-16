@@ -5,138 +5,86 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Student\StoreStudentRequest;
 use App\Http\Requests\Student\UpdateStudentRequest;
+use App\Http\Resources\StudentResource;
+use App\Http\Resources\StudentCollection;
+use App\Http\Traits\ApiResponseTrait;
 use App\Services\StudentService;
+use App\DTOs\StudentDTO;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Validation\ValidationException;
 
 class StudentController extends Controller
 {
+    use ApiResponseTrait;
+
     public function __construct(
         private StudentService $studentService
     ) {}
 
     /**
-     * Get all students.
+     * получить список всех студентов
      */
     public function index(): JsonResponse
     {
-        try {
-            $students = $this->studentService->getAllStudents();
+        $students = $this->studentService->getAll();
 
-            return response()->json([
-                'success' => true,
-                'data' => $students,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Ошибка при получении списка студентов.',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
+        return $this->successResponse(
+            message: 'Список студентов получен успешно.',
+            data: StudentCollection::make($students)
+        );
     }
 
     /**
-     * Get a specific student.
+     * получить информацию о конкретном студенте
      */
     public function show(int $id): JsonResponse
     {
-        try {
-            $student = $this->studentService->getStudent($id);
+        $student = $this->studentService->get($id);
 
-            return response()->json([
-                'success' => true,
-                'data' => $student,
-            ]);
-        } catch (ModelNotFoundException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Студент не найден.',
-            ], 404);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Ошибка при получении информации о студенте.',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
+        return $this->successResponse(
+            message: 'Информация о студенте получена успешно.',
+            data: new StudentResource($student)
+        );
     }
 
     /**
-     * Create a new student.
+     * создать студента
      */
     public function store(StoreStudentRequest $request): JsonResponse
     {
-        try {
-            $student = $this->studentService->createStudent($request->validated());
+        $dto = StudentDTO::fromArray($request->validated());
+        $student = $this->studentService->create($dto);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Студент успешно создан.',
-                'data' => $student->load('class'),
-            ], 201);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Ошибка при создании студента.',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
+        return $this->successResponse(
+            message: 'Студент успешно создан.',
+            data: new StudentResource($student->load('class')),
+            status: 201
+        );
     }
 
     /**
-     * Update a student.
+     *  обновить студента
      */
     public function update(UpdateStudentRequest $request, int $id): JsonResponse
     {
-        try {
-            $student = $this->studentService->updateStudent($id, $request->validated());
+        $dto = StudentDTO::fromArray($request->validated());
+        $student = $this->studentService->update($id, $dto);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Студент успешно обновлен.',
-                'data' => $student,
-            ]);
-        } catch (ModelNotFoundException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Студент не найден.',
-            ], 404);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Ошибка при обновлении студента.',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
+        return $this->successResponse(
+            message: 'Студент успешно обновлен.',
+            data: new StudentResource($student)
+        );
     }
 
     /**
-     * Delete a student.
+     * удалить студента
      */
     public function destroy(int $id): JsonResponse
     {
-        try {
-            $this->studentService->deleteStudent($id);
+        $this->studentService->delete($id);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Студент успешно удален.',
-            ]);
-        } catch (ModelNotFoundException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Студент не найден.',
-            ], 404);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Ошибка при удалении студента.',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
+        return $this->successResponse(
+            message: 'Студент успешно удален.'
+        );
     }
 }
 

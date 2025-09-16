@@ -14,21 +14,21 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create lectures
+        // Создать лекции
         $lectures = Lecture::factory(10)->create();
 
-        // Create classes
+        // Создать классы
         $classes = SchoolClass::factory(3)->create();
 
-        // Create students
+        // Создать студентов
         $students = Student::factory(15)->create();
 
-        // Assign some students to classes
+        // Назначить некоторых студентов в классы
         $students->take(12)->each(function ($student, $index) use ($classes) {
             $student->update(['class_id' => $classes->random()->id]);
         });
 
-        // Create curriculum for each class
+        // Создать учебный план для каждого класса
         $classes->each(function ($class) use ($lectures) {
             $selectedLectures = $lectures->random(rand(5, 8));
             $curriculumData = [];
@@ -40,7 +40,7 @@ class DatabaseSeeder extends Seeder
             $class->lectures()->attach($curriculumData);
         });
 
-        // Mark some students as attended some lectures
+        // Отметить некоторых студентов как посетивших некоторые лекции
         $students->take(8)->each(function ($student) use ($lectures) {
             $attendedLectures = $lectures->random(rand(2, 5));
             $attendanceData = [];

@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\SchoolClass;
 use App\Models\Lecture;
+use App\DTOs\ClassDTO;
+use App\DTOs\CurriculumDTO;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
@@ -11,100 +13,93 @@ use Illuminate\Support\Facades\DB;
 class ClassService
 {
     /**
-     * Get all classes with their students.
+     * найти все классы с их студентами
      */
-    public function getAllClasses(): Collection
+    public function getAll(): Collection
     {
         return SchoolClass::with('students')->get();
     }
 
     /**
-     * Get a specific class with its students.
+     * найти класс с его студентами
      */
-    public function getClass(int $id): SchoolClass
+    public function get(int $id): SchoolClass
     {
-        $class = SchoolClass::with('students')->find($id);
+        $class = SchoolClass::with('students')->findOrFail($id);  
+        // ->find($id);
 
-        if (!$class) {
-            throw new ModelNotFoundException('Класс не найден.');
-        }
+        // if (!$class) {
+        //     throw new ModelNotFoundException('Класс не найден.');
+        // }
 
         return $class;
     }
 
     /**
-     * Get curriculum (lectures) for a specific class.
+     * найти учебный план по классу
      */
-    public function getClassCurriculum(int $id): SchoolClass
+    public function getCurriculum(int $id): SchoolClass
     {
-        $class = SchoolClass::with('lectures')->find($id);
+        $class = SchoolClass::with('lectures')->findOrFail($id);  
 
-        if (!$class) {
-            throw new ModelNotFoundException('Класс не найден.');
-        }
+        // if (!$class) {
+        //     throw new ModelNotFoundException('Класс не найден.');
+        // }
 
         return $class;
     }
 
     /**
-     * Create a new class.
+     * создать класс
      */
-    public function createClass(array $data): SchoolClass
+    public function create(ClassDTO $dto): SchoolClass
     {
-        return SchoolClass::create($data);
+        return SchoolClass::create($dto->toArray());
     }
 
     /**
-     * Update a class.
+     * обновить класс
      */
-    public function updateClass(int $id, array $data): SchoolClass
+    public function update(int $id, ClassDTO $dto): SchoolClass
     {
-        $class = SchoolClass::find($id);
+        $class = SchoolClass::findOrFail($id);
 
-        if (!$class) {
-            throw new ModelNotFoundException('Класс не найден.');
-        }
-
-        $class->update($data);
+        $class->update($dto->toArray());
 
         return $class->fresh();
     }
 
     /**
-     * Delete a class (students will be detached but not deleted).
+     * удалить класс
      */
-    public function deleteClass(int $id): bool
+    public function delete(int $id): bool
     {
-        $class = SchoolClass::find($id);
+        $class = SchoolClass::findOrFail($id);
 
-        if (!$class) {
-            throw new ModelNotFoundException('Класс не найден.');
-        }
+        // if (!$class) {
+        //     throw new ModelNotFoundException('Класс не найден.');
+        // }
 
-        // Detach students from class (set class_id to null)
+        // открепить студентов от класса 
         $class->students()->update(['class_id' => null]);
 
         return $class->delete();
     }
 
     /**
-     * Update curriculum for a class.
+     * обновить учебный план по классу
      */
-    public function updateCurriculum(int $classId, array $lectures): SchoolClass
+    public function updateCurriculum(CurriculumDTO $dto): SchoolClass
     {
-        $class = SchoolClass::find($classId);
+        $class = SchoolClass::findOrFail($dto->classId);
 
-        if (!$class) {
-            throw new ModelNotFoundException('Класс не найден.');
-        }
-
-        DB::transaction(function () use ($class, $lectures) {
-            // Remove existing curriculum
+        DB::transaction(function () use ($class, $dto) {
+            // удалить существующий учебный план
             $class->lectures()->detach();
 
-            // Add new curriculum with order
+            // добавить новый учебный план с порядком
             $curriculumData = [];
-            foreach ($lectures as $lecture) {
+            foreach ($dto->lectures as $lecture) {
                 $curriculumData[$lecture['lecture_id']] = ['order' => $lecture['order']];
             }
 

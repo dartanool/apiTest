@@ -3,61 +3,54 @@
 namespace App\Services;
 
 use App\Models\Lecture;
+use App\DTOs\LectureDTO;
 use Illuminate\Database\Eloquent\Collection;
 
 class LectureService
 {
     /**
-     * Get all lectures.
+     * найти все лекции
      */
-    public function getAllLectures(): Collection
+    public function getAll(): Collection
     {
         return Lecture::all();
     }
 
     /**
-     * Get lecture by ID with classes and students.
+     * найти лекцию по ID с классами и студентами
      */
-    public function getLectureById(int $id): ?Lecture
+    public function getById(int $id): Lecture
     {
         return Lecture::with(['classes', 'students'])
-            ->find($id);
+            ->findOrFail($id);
     }
 
     /**
-     * Create a new lecture.
+     * создать лекцию
      */
-    public function createLecture(array $data): Lecture
+    public function create(LectureDTO $dto): Lecture
     {
-        return Lecture::create($data);
+        return Lecture::create($dto->toArray());
     }
 
     /**
-     * Update lecture.
+     * обновить лекцию
      */
-    public function updateLecture(int $id, array $data): ?Lecture
+    public function update(int $id, LectureDTO $dto): Lecture
     {
-        $lecture = Lecture::find($id);
+        $lecture = Lecture::findOrFail($id);
         
-        if (!$lecture) {
-            return null;
-        }
-
-        $lecture->update($data);
+        $lecture->update($dto->toArray());
         return $lecture->fresh();
     }
 
     /**
-     * Delete lecture.
+     * удалить лекцию
      */
-    public function deleteLecture(int $id): bool
+    public function delete(int $id): bool
     {
-        $lecture = Lecture::find($id);
+        $lecture = Lecture::findOrFail($id);
         
-        if (!$lecture) {
-            return false;
-        }
-
         return $lecture->delete();
     }
 }

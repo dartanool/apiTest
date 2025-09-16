@@ -4,82 +4,65 @@ namespace App\Services;
 
 use App\Models\Student;
 use App\Models\SchoolClass;
+use App\DTOs\StudentDTO;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class StudentService
 {
     /**
-     * Get all students with their class information.
+     * найти все студентов с информацией о классе
      */
-    public function getAllStudents(): Collection
+    public function getAll(): Collection
     {
         return Student::with('class')->get();
     }
 
     /**
-     * Get a specific student with class and attended lectures.
+     * найти студента по ID с информацией о классе и посещенных лекциях
      */
-    public function getStudent(int $id): Student
+    public function get(int $id): Student
     {
-        $student = Student::with(['class', 'attendedLectures'])
-            ->find($id);
-
-        if (!$student) {
-            throw new ModelNotFoundException('Студент не найден.');
-        }
-
-        return $student;
+        return Student::with(['class', 'attendedLectures'])
+            ->findOrFail($id);
     }
 
     /**
-     * Create a new student.
+     * создать студента
      */
-    public function createStudent(array $data): Student
+    public function create(StudentDTO $dto): Student
     {
-        return Student::create($data);
+        return Student::create($dto->toArray());
     }
 
     /**
-     * Update a student.
+     * обновить студента
      */
-    public function updateStudent(int $id, array $data): Student
+    public function update(int $id, StudentDTO $dto): Student
     {
-        $student = Student::find($id);
+        $student = Student::findOrFail($id);
 
-        if (!$student) {
-            throw new ModelNotFoundException('Студент не найден.');
-        }
-
-        $student->update($data);
+        $student->update($dto->toArray());
 
         return $student->fresh(['class']);
     }
 
     /**
-     * Delete a student.
+     * удалить студента
      */
-    public function deleteStudent(int $id): bool
+    public function delete(int $id): bool
     {
-        $student = Student::find($id);
-
-        if (!$student) {
-            throw new ModelNotFoundException('Студент не найден.');
-        }
+        $student = Student::findOrFail($id);
 
         return $student->delete();
     }
 
     /**
-     * Mark a student as attended a lecture.
+    * отметить студента как посетившего лекцию
      */
     public function markLectureAttended(int $studentId, int $lectureId): void
     {
-        $student = Student::find($studentId);
-
-        if (!$student) {
-            throw new ModelNotFoundException('Студент не найден.');
-        }
+        $student = Student::findOrFail($studentId);
 
         $student->attendedLectures()->syncWithoutDetaching([
             $lectureId => ['attended_at' => now()]
