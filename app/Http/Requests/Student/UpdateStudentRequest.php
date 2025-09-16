@@ -9,8 +9,6 @@ class UpdateStudentRequest extends FormRequest
 {
 
     /**
-     * Получить правила валидации для запроса.
-     *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array

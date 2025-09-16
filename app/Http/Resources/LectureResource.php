@@ -10,8 +10,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class LectureResource extends JsonResource
 {
     /**
-     * Преобразовать ресурс в массив.
-     *
      * @return array<string, mixed>
      */
     public function toArray(Request $request): array
