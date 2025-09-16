@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Http\Controllers\Api;
 
@@ -8,14 +9,12 @@ use App\Http\Requests\Lecture\UpdateLectureRequest;
 use App\Http\Resources\LectureResource;
 use App\Http\Resources\LectureCollection;
 use App\Services\LectureService;
-use App\Http\Traits\ApiResponseTrait;
 use App\DTOs\LectureDTO;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class LectureController extends Controller
 {
-    use ApiResponseTrait;
 
     public function __construct(
         private readonly LectureService $lectureService
@@ -27,10 +26,7 @@ class LectureController extends Controller
     public function index(): JsonResponse
     {
         $lectures = $this->lectureService->getAll();
-        return $this->successResponse(
-            'Список лекций успешно получен.',
-            LectureCollection::make($lectures)
-        );
+        return response()->json(LectureCollection::make($lectures));
     }
 
     /**
@@ -39,10 +35,7 @@ class LectureController extends Controller
     public function show(int $id): JsonResponse
     {
         $lecture = $this->lectureService->getById($id);
-        return $this->successResponse(
-            'Информация о лекции успешно получена.',
-            new LectureResource($lecture)
-        );
+        return response()->json(new LectureResource($lecture));
     }
 
     /**
@@ -52,12 +45,7 @@ class LectureController extends Controller
     {
         $lectureDTO = LectureDTO::fromArray($request->validated());
         $lecture = $this->lectureService->create($lectureDTO);
-        
-        return $this->successResponse(
-            'Лекция успешно создана.',
-            new LectureResource($lecture),
-            201
-        );
+        return response()->json(new LectureResource($lecture), 201);
     }
 
     /**
@@ -67,11 +55,7 @@ class LectureController extends Controller
     {
         $lectureDTO = LectureDTO::fromArray($request->validated());
         $lecture = $this->lectureService->update($id, $lectureDTO);
-        
-        return $this->successResponse(
-            'Лекция успешно обновлена.',
-            new LectureResource($lecture)
-        );
+        return response()->json(new LectureResource($lecture));
     }
 
     /**
@@ -80,6 +64,6 @@ class LectureController extends Controller
     public function destroy(int $id): JsonResponse
     {
         $this->lectureService->delete($id);
-        return $this->successResponse('Лекция успешно удалена.');
+        return response()->json([], 204);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Models\SchoolClass;
@@ -26,12 +28,7 @@ class ClassService
     public function get(int $id): SchoolClass
     {
         $class = SchoolClass::with('students')->findOrFail($id);  
-        // ->find($id);
-
-        // if (!$class) {
-        //     throw new ModelNotFoundException('Класс не найден.');
-        // }
-
+       
         return $class;
     }
 
@@ -41,10 +38,6 @@ class ClassService
     public function getCurriculum(int $id): SchoolClass
     {
         $class = SchoolClass::with('lectures')->findOrFail($id);  
-
-        // if (!$class) {
-        //     throw new ModelNotFoundException('Класс не найден.');
-        // }
 
         return $class;
     }
@@ -75,10 +68,6 @@ class ClassService
     public function delete(int $id): bool
     {
         $class = SchoolClass::findOrFail($id);
-
-        // if (!$class) {
-        //     throw new ModelNotFoundException('Класс не найден.');
-        // }
 
         // открепить студентов от класса 
         $class->students()->update(['class_id' => null]);

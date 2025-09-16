@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Http\Controllers\Api;
 
@@ -7,14 +8,12 @@ use App\Http\Requests\Student\StoreStudentRequest;
 use App\Http\Requests\Student\UpdateStudentRequest;
 use App\Http\Resources\StudentResource;
 use App\Http\Resources\StudentCollection;
-use App\Http\Traits\ApiResponseTrait;
 use App\Services\StudentService;
 use App\DTOs\StudentDTO;
 use Illuminate\Http\JsonResponse;
 
 class StudentController extends Controller
 {
-    use ApiResponseTrait;
 
     public function __construct(
         private StudentService $studentService
@@ -26,11 +25,7 @@ class StudentController extends Controller
     public function index(): JsonResponse
     {
         $students = $this->studentService->getAll();
-
-        return $this->successResponse(
-            message: 'Список студентов получен успешно.',
-            data: StudentCollection::make($students)
-        );
+        return response()->json(StudentCollection::make($students));
     }
 
     /**
@@ -39,11 +34,7 @@ class StudentController extends Controller
     public function show(int $id): JsonResponse
     {
         $student = $this->studentService->get($id);
-
-        return $this->successResponse(
-            message: 'Информация о студенте получена успешно.',
-            data: new StudentResource($student)
-        );
+        return response()->json(new StudentResource($student));
     }
 
     /**
@@ -53,12 +44,7 @@ class StudentController extends Controller
     {
         $dto = StudentDTO::fromArray($request->validated());
         $student = $this->studentService->create($dto);
-
-        return $this->successResponse(
-            message: 'Студент успешно создан.',
-            data: new StudentResource($student->load('class')),
-            status: 201
-        );
+        return response()->json(new StudentResource($student->load('class')), 201);
     }
 
     /**
@@ -68,11 +54,7 @@ class StudentController extends Controller
     {
         $dto = StudentDTO::fromArray($request->validated());
         $student = $this->studentService->update($id, $dto);
-
-        return $this->successResponse(
-            message: 'Студент успешно обновлен.',
-            data: new StudentResource($student)
-        );
+        return response()->json(new StudentResource($student));
     }
 
     /**
@@ -81,10 +63,7 @@ class StudentController extends Controller
     public function destroy(int $id): JsonResponse
     {
         $this->studentService->delete($id);
-
-        return $this->successResponse(
-            message: 'Студент успешно удален.'
-        );
+        return response()->json([], 204);
     }
 }
 
